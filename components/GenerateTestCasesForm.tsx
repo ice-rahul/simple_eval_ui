@@ -1,7 +1,7 @@
 "use client"
 
 import { EvalContext } from "@/context/evalContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 function extractVariables(prompt: string): string[] {
   const matches = prompt.match(/\{\{(.*?)\}\}/g) || [];
@@ -12,7 +12,7 @@ function extractVariables(prompt: string): string[] {
 type Props = {
   onGenerate: () => void;
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 };
 
 export function GenerateTestCasesForm({
@@ -23,6 +23,12 @@ export function GenerateTestCasesForm({
   const { testCasesConfig, setTestCasesConfig } = useContext(EvalContext);
   const { prompt, numTestCases } = testCasesConfig
   const variables = extractVariables(prompt);
+
+  useEffect(() => {
+    if(JSON.stringify(variables) !== JSON.stringify(testCasesConfig.variables) && setTestCasesConfig){
+      setTestCasesConfig({...testCasesConfig, variables})
+    }
+  }, [variables, setTestCasesConfig])
 
   return (
     <div className="space-y-5">
@@ -35,7 +41,7 @@ export function GenerateTestCasesForm({
           rows={5}
           value={prompt}
           onChange={(e) => {
-            setTestCasesConfig && setTestCasesConfig({ ...testCasesConfig, prompt: e.target.value });
+            setTestCasesConfig?.({ ...testCasesConfig, prompt: e.target.value });
           }}
           placeholder={"You are a support triage assistant. Classify this message: {{input}}"}
           className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
@@ -75,7 +81,7 @@ export function GenerateTestCasesForm({
           min={3}
           value={numTestCases}
           onChange={(e) => {
-            setTestCasesConfig && setTestCasesConfig({ ...testCasesConfig, numTestCases: Number(e.target.value) });
+            setTestCasesConfig?.({ ...testCasesConfig, numTestCases: Number(e.target.value) });
           }}
           className="w-28 rounded-xl border border-edge bg-surface-muted px-4 py-2 text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
         />
@@ -89,7 +95,7 @@ export function GenerateTestCasesForm({
         {loading ? "Generating…" : "Generate test cases"}
       </button>
 
-      {error && <p className="text-xs text-danger">{error}</p>}
+      {error && <p className="text-xs text-danger">{error.message}</p>}
     </div>
   );
 }

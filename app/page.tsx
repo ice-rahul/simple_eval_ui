@@ -7,23 +7,28 @@ import { TabsPanel } from "@/components/Tabs";
 import { TestCasesPreview } from "@/components/TestCasesPreview";
 import { TabNames } from "@/components/types";
 import { EvalContext } from "@/context/evalContext";
+import useEvaluatePromptMutation from "@/hooks/useEvaluatePromptMutation";
+import useGenerateTestCaseMutation from "@/hooks/useGenerateTestCaseMutation";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 
 function HomeInner() {
   const [activeTab, setActiveTab] = useState<TabNames>("Generate Test Cases");
   const [activePreviewTab, setActivePreviewTab] = useState<TabNames>("Generated Test Cases");
+  const { mutate: generateTestCase, isPending: testCaseLoading, error: testCaseError } = useGenerateTestCaseMutation()
+  const { mutate: evaluatePrompt, isPending: evaluationLoading, error: evaluationError } = useEvaluatePromptMutation()
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "Generate Test Cases":
-        return <GenerateTestCasesForm onGenerate={function (): void {
-          throw new Error("Function not implemented.");
-        }} loading={false} error={null} />;
+        return <GenerateTestCasesForm onGenerate={() => {
+          generateTestCase()
+        }} loading={testCaseLoading} error={testCaseError} />;
       case "Evaluate":
-        return <EvaluateForm onEvaluate={function (): void {
-          throw new Error("Function not implemented.");
-        }} loading={false} error={null} />;
+        return <EvaluateForm onEvaluate={() => {
+          evaluatePrompt()
+        }} loading={evaluationLoading} error={evaluationError} />;
       default:
         return null;
     }
@@ -32,7 +37,7 @@ function HomeInner() {
   const renderPreviewContent = () => {
     switch (activePreviewTab) {
       case "Generated Test Cases":
-        return <TestCasesPreview testCases={[]} loading={false} />;
+        return <TestCasesPreview loading={false} />;
       case "Evaluated Test Cases":
         return <EvaluationPreview results={[]} loading={false} />;
       default:
@@ -55,7 +60,7 @@ function HomeInner() {
 
         {/* ---- Card ---- */}
         <section className=" border border-edge shadow-xl shadow-black/5 flex bg-background gap-0.5">
-          <div className="px-4 py-2 space-y-6 bg-surface">
+          <div className="px-4 py-2 space-y-6 bg-surface w-1/2">
             {/* API key */}
             <div className="space-y-2">
               <label htmlFor="apiKey" className="text-sm font-medium block">
@@ -89,7 +94,7 @@ function HomeInner() {
               {renderTabContent()}
             </TabsPanel>
           </div>
-          <div className="px-4 py-2 space-y-6 bg-surface flex-1">
+          <div className="px-4 py-2 space-y-6 bg-surface flex-1 w-1/2">
             Preview
             <TabsPanel tabNames={["Generated Test Cases", "Evaluated Test Cases"]} activeTab={activePreviewTab} onTabClick={setActivePreviewTab} >
               {renderPreviewContent()}
@@ -107,6 +112,7 @@ function HomeInner() {
 
 
 export default function Home() {
+  const queryClient = new QueryClient()
   const [testCasesConfig, setTestCasesConfig] = useState({
     prompt: "",
     numTestCases: 3,
@@ -119,6 +125,8 @@ export default function Home() {
     additionalCriteria: "",
   });
 
+  const [generatedTestCases, setGeneratedTestCases] = useState<{ testcases: unknown[] }>({ testcases: [] })
+
   // Memoize so the context value only gets a new identity when the
   // state it wraps actually changes — otherwise every render of Home
   // creates a new object and re-renders every consumer for no reason.
@@ -126,15 +134,19 @@ export default function Home() {
     () => ({
       testCasesConfig,
       evaluateConfig,
+      generatedTestCases,
       setTestCasesConfig,
       setEvaluateConfig,
+      setGeneratedTestCases
     }),
-    [testCasesConfig, evaluateConfig]
+    [testCasesConfig, evaluateConfig, generatedTestCases]
   );
 
   return (
-    <EvalContext.Provider value={value}>
-      <HomeInner />
-    </EvalContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <EvalContext.Provider value={value}>
+        <HomeInner />
+      </EvalContext.Provider>
+    </QueryClientProvider>
   );
 }

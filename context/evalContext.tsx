@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-type DefaultEvalType = {
+export type DefaultEvalType = {
     testCasesConfig: {
         prompt: string,
         numTestCases: number,
@@ -10,9 +10,11 @@ type DefaultEvalType = {
         prompt: string,
         testCasesJson: string,
         additionalCriteria: string,
-    }
+    },
+    generatedTestCases: { testcases: unknown[] },
     setTestCasesConfig?: (config: { prompt: string, numTestCases: number, variables: string[] }) => void;
     setEvaluateConfig?: (config: { prompt: string, testCasesJson: string, additionalCriteria: string }) => void;
+    setGeneratedTestCases?: (testcases: { testcases: unknown[] }) => void
 }
 
 export const defaultEvalContext: DefaultEvalType = {
@@ -25,7 +27,8 @@ export const defaultEvalContext: DefaultEvalType = {
         prompt: "",
         testCasesJson: "",
         additionalCriteria: "",
-    }
+    },
+    generatedTestCases: { testcases: [] }
 }
 
 export const EvalContext = createContext<DefaultEvalType>(defaultEvalContext);

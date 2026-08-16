@@ -1,13 +1,16 @@
 "use client"
 
-import { TestCase } from "./types";
+import { useContext } from "react";
+import { EvalContext } from "@/context/evalContext";
 
 type Props = {
-  testCases: TestCase[];
   loading: boolean;
 };
 
-export function TestCasesPreview({ testCases, loading }: Props) {
+export function TestCasesPreview({ loading }: Props) {
+  const { generatedTestCases } = useContext(EvalContext)
+  const { testcases: testCases } = generatedTestCases
+
   if (loading) {
     return (
       <div className="text-sm text-muted py-8 text-center">Generating test cases…</div>
@@ -29,8 +32,9 @@ export function TestCasesPreview({ testCases, loading }: Props) {
           <div className="text-[10px] font-semibold tracking-wide text-accent uppercase">
             Case {String(i + 1).padStart(2, "0")}
           </div>
-          <div className="text-sm text-foreground">{tc.input}</div>
-          <div className="text-xs text-muted">expects: {tc.criteria}</div>
+          <pre className="whitespace-pre-wrap wrap-break-word">
+            {JSON.stringify(tc, undefined, 2)}
+          </pre>
         </div>
       ))}
     </div>

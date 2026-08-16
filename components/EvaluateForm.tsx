@@ -7,7 +7,7 @@ import { EvalContext } from "@/context/evalContext";
 type Props = {
   onEvaluate: () => void;
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 };
 
 export function EvaluateForm({
@@ -91,7 +91,7 @@ export function EvaluateForm({
         {loading ? "Evaluating…" : "Run evaluation"}
       </button>
 
-      {error && <p className="text-xs text-danger">{error}</p>}
+      {error && <p className="text-xs text-danger">{error.message}</p>}
     </div>
   );
 }
