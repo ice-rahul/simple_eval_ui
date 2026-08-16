@@ -18,12 +18,13 @@ function HomeInner() {
   const [activePreviewTab, setActivePreviewTab] = useState<TabNames>("Generated Test Cases");
   const { mutate: generateTestCase, isPending: testCaseLoading, error: testCaseError } = useGenerateTestCaseMutation()
   const { mutate: evaluatePrompt, isPending: evaluationLoading, error: evaluationError } = useEvaluatePromptMutation()
+  const [apiKey, setApiKey] = useState("")
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "Generate Test Cases":
         return <GenerateTestCasesForm onGenerate={() => {
-          generateTestCase()
+          generateTestCase(apiKey)
         }} loading={testCaseLoading} error={testCaseError} />;
       case "Evaluate":
         return <EvaluateForm onEvaluate={() => {
@@ -43,6 +44,10 @@ function HomeInner() {
       default:
         return null;
     }
+  }
+
+  const handleApiKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setApiKey?.(e.target.value)
   }
 
   return (
@@ -69,7 +74,7 @@ function HomeInner() {
               <input
                 id="apiKey"
                 type="password"
-                // onChange={handleApiKey}
+                onChange={handleApiKey}
                 placeholder="Paste your API key"
                 className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
               />
