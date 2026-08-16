@@ -1,42 +1,29 @@
 "use client"
 
+import { EvaluateForm } from "@/components/EvaluateForm";
+import { EvaluationPreview } from "@/components/EvaluationPreview";
+import { GenerateTestCasesForm } from "@/components/GenerateTestCasesForm";
 import { TabsPanel } from "@/components/Tabs";
+import { TestCasesPreview } from "@/components/TestCasesPreview";
 import { TabNames } from "@/components/types";
-import { useState } from "react";
+import { EvalContext } from "@/context/evalContext";
+import { useMemo, useState } from "react";
 
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState<TabNames>("Evaluate");
-  const [activePreviewTab, setActivePreviewTab] = useState<TabNames>("Evaluate");
+function HomeInner() {
+  const [activeTab, setActiveTab] = useState<TabNames>("Generate Test Cases");
+  const [activePreviewTab, setActivePreviewTab] = useState<TabNames>("Generated Test Cases");
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "Generate Test Cases":
-        return <div>
-          <div>
-            prompt
-          </div>
-          <div>
-            variables
-          </div>
-          <div>
-            number of test cases
-          </div>
-          <button>Generate</button>
-        </div>;
+        return <GenerateTestCasesForm onGenerate={function (): void {
+          throw new Error("Function not implemented.");
+        }} loading={false} error={null} />;
       case "Evaluate":
-        return <div>
-          <div>
-            prompt with/without variables
-          </div>
-          <div>
-            test cases
-          </div>
-          <div>
-            additional acceptance criteria if any
-          </div>
-          <button>Evaluate</button>
-        </div>;
+        return <EvaluateForm onEvaluate={function (): void {
+          throw new Error("Function not implemented.");
+        }} loading={false} error={null} />;
       default:
         return null;
     }
@@ -45,31 +32,9 @@ export default function Home() {
   const renderPreviewContent = () => {
     switch (activePreviewTab) {
       case "Generated Test Cases":
-        return <div>
-          <div>
-            prompt
-          </div>
-          <div>
-            variables
-          </div>
-          <div>
-            number of test cases
-          </div>
-          <button>Generate</button>
-        </div>;
+        return <TestCasesPreview testCases={[]} loading={false} />;
       case "Evaluated Test Cases":
-        return <div>
-          <div>
-            prompt with/without variables
-          </div>
-          <div>
-            test cases
-          </div>
-          <div>
-            additional acceptance criteria if any
-          </div>
-          <button>Evaluate</button>
-        </div>;
+        return <EvaluationPreview results={[]} loading={false} />;
       default:
         return null;
     }
@@ -137,5 +102,39 @@ export default function Home() {
         Powered by Claude <span className="text-accent border rounded-4xl px-2 py-1 font-bold text-xs">haiku-4-5</span>
       </footer>
     </div>
+  );
+}
+
+
+export default function Home() {
+  const [testCasesConfig, setTestCasesConfig] = useState({
+    prompt: "",
+    numTestCases: 3,
+    variables: [] as string[],
+  });
+
+  const [evaluateConfig, setEvaluateConfig] = useState({
+    prompt: "",
+    testCasesJson: "",
+    additionalCriteria: "",
+  });
+
+  // Memoize so the context value only gets a new identity when the
+  // state it wraps actually changes — otherwise every render of Home
+  // creates a new object and re-renders every consumer for no reason.
+  const value = useMemo(
+    () => ({
+      testCasesConfig,
+      evaluateConfig,
+      setTestCasesConfig,
+      setEvaluateConfig,
+    }),
+    [testCasesConfig, evaluateConfig]
+  );
+
+  return (
+    <EvalContext.Provider value={value}>
+      <HomeInner />
+    </EvalContext.Provider>
   );
 }
