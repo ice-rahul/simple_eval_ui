@@ -1,0 +1,1 @@
+export type TabNames = "Generate Test Cases" | "Evaluate" | "Generated Test Cases" | "Evaluated Test Cases"
