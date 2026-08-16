@@ -1,7 +1,6 @@
 "use client"
 
 import { useContext, useMemo } from "react";
-import { TestCase } from "./types";
 import { EvalContext } from "@/context/evalContext";
 
 type Props = {
@@ -36,7 +35,7 @@ export function EvaluateForm({
           rows={5}
           value={prompt}
           onChange={(e) => {
-            setEvaluateConfig?.({ ...evaluateConfig, prompt : e.target.value})
+            setEvaluateConfig?.({ ...evaluateConfig, prompt: e.target.value })
           }}
           placeholder={"You are a support triage assistant. Classify this message: {{input}}"}
           className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
@@ -55,7 +54,7 @@ export function EvaluateForm({
           rows={7}
           value={testCasesJson}
           onChange={(e) => {
-            setEvaluateConfig?.({...evaluateConfig, testCasesJson: e.target.value})
+            setEvaluateConfig?.({ ...evaluateConfig, testCasesJson: e.target.value })
           }}
           placeholder='[{"input": "...", "criteria": "..."}]'
           className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 font-mono text-xs text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
@@ -76,7 +75,7 @@ export function EvaluateForm({
           rows={2}
           value={additionalCriteria}
           onChange={(e) => {
-            setEvaluateConfig?.({...evaluateConfig, additionalCriteria: e.target.value})
+            setEvaluateConfig?.({ ...evaluateConfig, additionalCriteria: e.target.value })
           }}
           placeholder="e.g. never mention pricing, always respond in under 3 sentences"
           className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"

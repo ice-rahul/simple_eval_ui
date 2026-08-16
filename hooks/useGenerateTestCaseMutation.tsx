@@ -1,4 +1,4 @@
-import { DefaultEvalType, EvalContext } from '@/context/evalContext'
+import { EvalContext } from '@/context/evalContext'
 import { useMutation } from '@tanstack/react-query'
 import { useContext } from 'react'
 

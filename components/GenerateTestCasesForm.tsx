@@ -25,10 +25,10 @@ export function GenerateTestCasesForm({
   const variables = extractVariables(prompt);
 
   useEffect(() => {
-    if(JSON.stringify(variables) !== JSON.stringify(testCasesConfig.variables) && setTestCasesConfig){
-      setTestCasesConfig({...testCasesConfig, variables})
+    if (JSON.stringify(variables) !== JSON.stringify(testCasesConfig.variables) && setTestCasesConfig) {
+      setTestCasesConfig({ ...testCasesConfig, variables })
     }
-  }, [variables, setTestCasesConfig])
+  }, [variables, setTestCasesConfig, testCasesConfig])
 
   return (
     <div className="space-y-5">
