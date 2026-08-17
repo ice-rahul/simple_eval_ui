@@ -28,7 +28,7 @@ function HomeInner() {
         }} loading={testCaseLoading} error={testCaseError} />;
       case "Evaluate":
         return <EvaluateForm onEvaluate={() => {
-          evaluatePrompt()
+          evaluatePrompt(apiKey)
         }} loading={evaluationLoading} error={evaluationError} />;
       default:
         return null;
@@ -40,7 +40,7 @@ function HomeInner() {
       case "Generated Test Cases":
         return <TestCasesPreview loading={false} />;
       case "Evaluated Test Cases":
-        return <EvaluationPreview results={[]} loading={false} />;
+        return <EvaluationPreview loading={evaluationLoading} />;
       default:
         return null;
     }
@@ -131,6 +131,7 @@ export default function Home() {
   });
 
   const [generatedTestCases, setGeneratedTestCases] = useState<{ testcases: unknown[] }>({ testcases: [] })
+  const [evaluationReportHtml, setEvaluationReportHtml] = useState<string | null>(null)
 
   // Memoize so the context value only gets a new identity when the
   // state it wraps actually changes — otherwise every render of Home
@@ -140,11 +141,13 @@ export default function Home() {
       testCasesConfig,
       evaluateConfig,
       generatedTestCases,
+      evaluationReportHtml,
       setTestCasesConfig,
       setEvaluateConfig,
-      setGeneratedTestCases
+      setGeneratedTestCases,
+      setEvaluationReportHtml
     }),
-    [testCasesConfig, evaluateConfig, generatedTestCases]
+    [testCasesConfig, evaluateConfig, generatedTestCases, evaluationReportHtml]
   );
 
   return (

@@ -12,9 +12,11 @@ export type DefaultEvalType = {
         additionalCriteria: string,
     },
     generatedTestCases: { testcases: unknown[] },
+    evaluationReportHtml: string | null,
     setTestCasesConfig?: (config: { prompt: string, numTestCases: number, variables: string[] }) => void;
     setEvaluateConfig?: (config: { prompt: string, testCasesJson: string, additionalCriteria: string }) => void;
     setGeneratedTestCases?: (testcases: { testcases: unknown[] }) => void
+    setEvaluationReportHtml?: (html: string | null) => void
 }
 
 export const defaultEvalContext: DefaultEvalType = {
@@ -28,7 +30,8 @@ export const defaultEvalContext: DefaultEvalType = {
         testCasesJson: "",
         additionalCriteria: "",
     },
-    generatedTestCases: { testcases: [] }
+    generatedTestCases: { testcases: [] },
+    evaluationReportHtml: null
 }
 
 export const EvalContext = createContext<DefaultEvalType>(defaultEvalContext);

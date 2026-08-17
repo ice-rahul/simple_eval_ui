@@ -2,6 +2,8 @@
 
 import { useContext, useMemo } from "react";
 import { EvalContext } from "@/context/evalContext";
+import { PRESET_PROMPTS } from "@/constants/constants";
+import CodeEditor from "@uiw/react-textarea-code-editor";
 
 type Props = {
   onEvaluate: () => void;
@@ -27,6 +29,24 @@ export function EvaluateForm({
   return (
     <div className="space-y-5">
       <div className="space-y-2">
+        <span className="text-sm font-medium block">Try an example</span>
+        <div className="flex flex-wrap gap-2">
+          {PRESET_PROMPTS.map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() =>
+                setEvaluateConfig?.({ ...evaluateConfig, prompt: preset.prompt })
+              }
+              className="text-xs font-medium px-2.5 py-1.5 rounded-full border border-edge text-muted hover:text-foreground hover:border-accent transition cursor-pointer"
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2">
         <label htmlFor="eval-prompt" className="text-sm font-medium block">
           Prompt
         </label>
@@ -49,20 +69,31 @@ export function EvaluateForm({
         <label htmlFor="eval-cases" className="text-sm font-medium block">
           Test cases (JSON)
         </label>
-        <textarea
-          id="eval-cases"
-          rows={7}
-          value={testCasesJson}
-          onChange={(e) => {
-            setEvaluateConfig?.({ ...evaluateConfig, testCasesJson: e.target.value })
-          }}
-          placeholder='[{"input": "...", "criteria": "..."}]'
-          className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 font-mono text-xs text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
-        />
+        <div className="rounded-xl border border-edge bg-surface-muted overflow-hidden focus-within:border-accent focus-within:ring-2 focus-within:ring-[rgb(var(--accent-rgb)/0.35)]">
+          <CodeEditor
+            id="eval-cases"
+            value={testCasesJson}
+            language="json"
+            placeholder='[{"prompt_inputs": {"input": "..."}, "solution_criteria": ["..."]}]'
+            onChange={(e) => {
+              setEvaluateConfig?.({ ...evaluateConfig, testCasesJson: e.target.value })
+            }}
+            padding={12}
+            minHeight={140}
+            style={{
+              fontFamily: "var(--font-geist-mono, monospace)",
+              fontSize: 12,
+              backgroundColor: "transparent",
+              color: "var(--foreground)",
+            }}
+          />
+        </div>
         <p className="text-xs text-muted">
-          {parsedTestCases
-            ? `${parsedTestCases.length} test case${parsedTestCases.length === 1 ? "" : "s"} ready.`
-            : "Generate test cases first, or paste your own JSON array here."}
+          {testCasesJson.trim() === ""
+            ? "Generate test cases first, or paste your own JSON array here."
+            : parsedTestCases
+              ? `${parsedTestCases.length} test case${parsedTestCases.length === 1 ? "" : "s"} ready.`
+              : "This doesn't look like valid JSON yet."}
         </p>
       </div>
 
