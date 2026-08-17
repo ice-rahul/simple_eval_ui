@@ -11,6 +11,7 @@ import useEvaluatePromptMutation from "@/hooks/useEvaluatePromptMutation";
 import useGenerateTestCaseMutation from "@/hooks/useGenerateTestCaseMutation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { Group, Panel, Separator } from "react-resizable-panels";
 
 
 function HomeInner() {
@@ -64,47 +65,56 @@ function HomeInner() {
         </header>
 
         {/* ---- Card ---- */}
-        <section className=" border border-edge shadow-xl shadow-black/5 flex bg-background gap-0.5">
-          <div className="px-4 py-2 space-y-6 bg-surface w-1/2">
-            {/* API key */}
-            <div className="space-y-2">
-              <label htmlFor="apiKey" className="text-sm font-medium block">
-                Claude Anthropic key
-              </label>
-              <input
-                id="apiKey"
-                type="password"
-                onChange={handleApiKey}
-                placeholder="Paste your API key"
-                className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
-              />
-              <p className="text-xs text-muted leading-relaxed">
-                Your key is never stored anywhere; it is only used to generate
-                your test cases and evaluations. Get one from{" "}
-                <a
-                  className="text-accent hover:underline underline-offset-2"
-                  href="https://platform.claude.com/settings/workspaces/default/keys"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Claude
-                </a>
-                .
-              </p>
-            </div>
+        <section className="border border-edge shadow-xl shadow-black/5 bg-background">
+          <Group orientation="horizontal" className="h-auto!">
+            <Panel defaultSize={50} minSize={25}>
+              <div className="px-4 py-2 space-y-6 bg-surface h-full">
+                {/* API key */}
+                <div className="space-y-2">
+                  <label htmlFor="apiKey" className="text-sm font-medium block">
+                    Claude Anthropic key
+                  </label>
+                  <input
+                    id="apiKey"
+                    type="password"
+                    onChange={handleApiKey}
+                    placeholder="Paste your API key"
+                    className="w-full rounded-xl border border-edge bg-surface-muted px-4 py-3 text-foreground placeholder:text-muted outline-none transition focus:border-accent focus:ring-2 focus:ring-[rgb(var(--accent-rgb)/0.35)]"
+                  />
+                  <p className="text-xs text-muted leading-relaxed">
+                    Your key is never stored anywhere; it is only used to generate
+                    your test cases and evaluations. Get one from{" "}
+                    <a
+                      className="text-accent hover:underline underline-offset-2"
+                      href="https://platform.claude.com/settings/workspaces/default/keys"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Claude
+                    </a>
+                    .
+                  </p>
+                </div>
 
-            <div className="border-t border-edge" />
+                <div className="border-t border-edge" />
 
-            <TabsPanel tabNames={["Generate Test Cases", "Evaluate"]} activeTab={activeTab} onTabClick={setActiveTab} >
-              {renderTabContent()}
-            </TabsPanel>
-          </div>
-          <div className="px-4 py-2 space-y-6 bg-surface flex-1 w-1/2">
-            Preview
-            <TabsPanel tabNames={["Generated Test Cases", "Evaluated Test Cases"]} activeTab={activePreviewTab} onTabClick={setActivePreviewTab} >
-              {renderPreviewContent()}
-            </TabsPanel>
-          </div>
+                <TabsPanel tabNames={["Generate Test Cases", "Evaluate"]} activeTab={activeTab} onTabClick={setActiveTab} >
+                  {renderTabContent()}
+                </TabsPanel>
+              </div>
+            </Panel>
+
+            <Separator className="w-1.5 bg-edge hover:bg-accent transition-colors cursor-col-resize" />
+
+            <Panel defaultSize={50} minSize={25}>
+              <div className="px-4 py-2 space-y-6 bg-surface h-full">
+                Preview
+                <TabsPanel tabNames={["Generated Test Cases", "Evaluated Test Cases"]} activeTab={activePreviewTab} onTabClick={setActivePreviewTab} >
+                  {renderPreviewContent()}
+                </TabsPanel>
+              </div>
+            </Panel>
+          </Group>
         </section>
       </main>
 

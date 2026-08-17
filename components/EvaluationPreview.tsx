@@ -1,8 +1,10 @@
 "use client"
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { EvalContext } from "@/context/evalContext";
 import { CopyButton } from "./CopyButton";
+import { DownloadButton } from "./DownloadButton";
+import { Modal } from "./Modal";
 
 type Props = {
   loading: boolean;
@@ -10,6 +12,7 @@ type Props = {
 
 export function EvaluationPreview({ loading }: Props) {
   const { evaluationReportHtml } = useContext(EvalContext);
+  const [expanded, setExpanded] = useState(false);
 
   if (loading) {
     return <div className="text-sm text-muted py-8 text-center">Running evaluation…</div>;
@@ -25,8 +28,21 @@ export function EvaluationPreview({ loading }: Props) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-2">
+        <button
+          onClick={() => setExpanded(true)}
+          type="button"
+          className="text-[11px] font-medium px-2.5 py-1 rounded-lg border border-edge text-muted hover:text-foreground hover:border-accent transition cursor-pointer"
+        >
+          Expand
+        </button>
         <CopyButton label="Copy report HTML" getText={() => evaluationReportHtml} />
+        <DownloadButton
+          label="Download HTML"
+          filename="evaluation-report.html"
+          mimeType="text/html"
+          getContent={() => evaluationReportHtml}
+        />
       </div>
       {/*
         The backend returns a full HTML document (<!DOCTYPE html>, <html>,
@@ -42,6 +58,15 @@ export function EvaluationPreview({ loading }: Props) {
         style={{ height: 600 }}
         title="Evaluation report"
       />
+
+      <Modal open={expanded} onClose={() => setExpanded(false)} title="Evaluation report">
+        <iframe
+          srcDoc={evaluationReportHtml}
+          sandbox=""
+          className="w-full h-full rounded-xl border border-edge bg-white"
+          title="Evaluation report (expanded)"
+        />
+      </Modal>
     </div>
   );
 }

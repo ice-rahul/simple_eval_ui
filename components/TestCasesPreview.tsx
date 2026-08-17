@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { EvalContext } from "@/context/evalContext";
 import JsonView from "@uiw/react-json-view";
 import { CopyButton } from "./CopyButton";
+import { DownloadButton } from "./DownloadButton";
 import { themeVars } from "@/constants/constants";
 
 type Props = {
@@ -13,7 +14,6 @@ type Props = {
 export function TestCasesPreview({ loading }: Props) {
   const { generatedTestCases } = useContext(EvalContext)
   const { testcases: testCases } = generatedTestCases
-  const safeData = testCases && typeof testCases === "object" ? testCases : { value: testCases };
 
   if (loading) {
     return (
@@ -35,27 +35,38 @@ export function TestCasesPreview({ loading }: Props) {
         <span className="text-xs text-muted">
           {testCases.length} case{testCases.length === 1 ? "" : "s"}
         </span>
-        <CopyButton label="Copy all" getText={() => JSON.stringify(testCases, null, 2)} />
+        <div className="flex items-center gap-2">
+          <CopyButton label="Copy all" getText={() => JSON.stringify(testCases, null, 2)} />
+          <DownloadButton
+            label="Download JSON"
+            filename="test-cases.json"
+            mimeType="application/json"
+            getContent={() => JSON.stringify(testCases, null, 2)}
+          />
+        </div>
       </div>
 
-      {testCases.map((tc, i) => (
-        <div key={i} className="rounded-xl border border-edge bg-surface-muted p-3.5 space-y-2">
-          <div className="text-[10px] font-semibold tracking-wide text-accent uppercase">
-            Case {String(i + 1).padStart(2, "0")}
+      {testCases.map((tc, i) => {
+        const safeCase = tc && typeof tc === "object" ? tc : { value: tc };
+        return (
+          <div key={i} className="rounded-xl border border-edge bg-surface-muted p-3.5 space-y-2">
+            <div className="text-[10px] font-semibold tracking-wide text-accent uppercase">
+              Case {String(i + 1).padStart(2, "0")}
+            </div>
+            <div
+              className="[&>div]:p-2 [&>div]:rounded-lg"
+              style={themeVars}
+            >
+              <JsonView
+                value={safeCase}
+                displayDataTypes={false}
+                enableClipboard
+                collapsed={2}
+              />
+            </div>
           </div>
-          <div
-            className="[&>div]:p-2 [&>div]:rounded-lg"
-            style={themeVars}
-          >
-            <JsonView
-              value={safeData}
-              displayDataTypes={false}
-              enableClipboard
-              collapsed={2}
-            />
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
