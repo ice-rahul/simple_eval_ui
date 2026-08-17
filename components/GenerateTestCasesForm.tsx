@@ -1,5 +1,6 @@
 "use client"
 
+import { PRESET_PROMPTS } from "@/constants/constants";
 import { EvalContext } from "@/context/evalContext";
 import { useContext, useEffect } from "react";
 
@@ -32,6 +33,24 @@ export function GenerateTestCasesForm({
 
   return (
     <div className="space-y-5">
+      <div className="space-y-2">
+        <span className="text-sm font-medium block">Try an example</span>
+        <div className="flex flex-wrap gap-2">
+          {PRESET_PROMPTS.map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() =>
+                setTestCasesConfig?.({ ...testCasesConfig, prompt: preset.prompt })
+              }
+              className="text-xs font-medium px-2.5 py-1.5 rounded-full border border-edge text-muted hover:text-foreground hover:border-accent transition cursor-pointer"
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="space-y-2">
         <label htmlFor="gen-prompt" className="text-sm font-medium block">
           Prompt
