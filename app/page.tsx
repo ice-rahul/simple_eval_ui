@@ -12,9 +12,15 @@ import useGenerateTestCaseMutation from "@/hooks/useGenerateTestCaseMutation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
+import { cx } from "tailwind-variants"
 
+
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function HomeInner() {
+  const isMobile = useMediaQuery("(max-width: 1200px)");
+  const orientation = isMobile ? "vertical" : "horizontal";
+
   const [activeTab, setActiveTab] = useState<TabNames>("Generate Test Cases");
   const [activePreviewTab, setActivePreviewTab] = useState<TabNames>("Generated Test Cases");
   const { mutate: generateTestCase, isPending: testCaseLoading, error: testCaseError } = useGenerateTestCaseMutation()
@@ -66,7 +72,7 @@ function HomeInner() {
 
         {/* ---- Card ---- */}
         <section className="border border-edge shadow-xl shadow-black/5 bg-background">
-          <Group orientation="horizontal" className="h-auto!">
+          <Group orientation={orientation} className={cx({ "h-auto!": !isMobile, "block!": isMobile })}>
             <Panel defaultSize={50} minSize={25}>
               <div className="px-4 py-2 space-y-6 bg-surface h-full">
                 {/* API key */}
@@ -104,7 +110,7 @@ function HomeInner() {
               </div>
             </Panel>
 
-            <Separator className="w-1.5 bg-edge hover:bg-accent transition-colors cursor-col-resize" />
+            <Separator className={isMobile ? "h-1.5 w-full bg-edge hover:bg-accent transition-colors cursor-row-resize" : "w-1.5 bg-edge hover:bg-accent transition-colors cursor-col-resize"} />
 
             <Panel defaultSize={50} minSize={25}>
               <div className="px-4 py-2 space-y-6 bg-surface h-full">
